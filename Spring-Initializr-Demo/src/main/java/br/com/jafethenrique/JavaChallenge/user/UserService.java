@@ -1,6 +1,6 @@
-package br.com.jafethenrique.user;
+package br.com.jafethenrique.JavaChallenge.user;
 
-import br.com.jafethenrique.utils.JWTToken;
+import br.com.jafethenrique.JavaChallenge.utils.JWTToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

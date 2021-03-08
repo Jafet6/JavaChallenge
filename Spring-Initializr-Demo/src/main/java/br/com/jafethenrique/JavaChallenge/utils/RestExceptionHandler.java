@@ -1,6 +1,6 @@
-package br.com.jafethenrique.utils;
+package br.com.jafethenrique.JavaChallenge.utils;
 
-import br.com.jafethenrique.utils.apiErrorsHandler.ApiError;
+import br.com.jafethenrique.JavaChallenge.utils.apiErrorsHandler.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;

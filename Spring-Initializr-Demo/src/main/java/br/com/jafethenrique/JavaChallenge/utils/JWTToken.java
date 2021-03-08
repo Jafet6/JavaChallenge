@@ -1,4 +1,4 @@
-package br.com.jafethenrique.utils;
+package br.com.jafethenrique.JavaChallenge.utils;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;

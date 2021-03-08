@@ -1,4 +1,4 @@
-package br.com.jafethenrique.user;
+package br.com.jafethenrique.JavaChallenge.user;
 
 import javax.persistence.*;
 

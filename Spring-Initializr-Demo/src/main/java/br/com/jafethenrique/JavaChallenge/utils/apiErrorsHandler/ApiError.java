@@ -1,4 +1,4 @@
-package br.com.jafethenrique.utils.apiErrorsHandler;
+package br.com.jafethenrique.JavaChallenge.utils.apiErrorsHandler;
 
 import org.springframework.http.HttpStatus;
 
