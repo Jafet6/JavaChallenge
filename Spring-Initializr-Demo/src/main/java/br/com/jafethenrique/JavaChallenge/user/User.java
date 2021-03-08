@@ -11,19 +11,24 @@ public class User {
     private Long id;
 
     private String name;
+
+    @Column(unique=true)
     private String email;
-//    private String password;
+
+    private String password;
 //    private List<PhoneObject> phones;
 
-    public User(Long id, String name, String email) {
+    public User(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
-    public User(String name, String email) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     public User() {
@@ -53,12 +58,21 @@ public class User {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

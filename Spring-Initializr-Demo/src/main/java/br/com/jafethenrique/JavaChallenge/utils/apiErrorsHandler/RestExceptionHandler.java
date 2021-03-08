@@ -1,6 +1,7 @@
-package br.com.jafethenrique.JavaChallenge.utils;
+package br.com.jafethenrique.JavaChallenge.utils.apiErrorsHandler;
 
 import br.com.jafethenrique.JavaChallenge.utils.apiErrorsHandler.ApiError;
+import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.security.NoSuchAlgorithmException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -40,6 +42,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityExistsException.class)
     protected ResponseEntity<Object> handleEntityExists(
             EntityExistsException exception) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(exception.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(NoSuchAlgorithmException.class)
+    protected ResponseEntity<Object> handleNoSuchAlgorithm(
+            NoSuchAlgorithmException exception) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
+        apiError.setMessage(exception.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    protected ResponseEntity<Object> handlePasswordNotMatching(
+            InvalidPasswordException exception) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(exception.getMessage());
         return buildResponseEntity(apiError);
