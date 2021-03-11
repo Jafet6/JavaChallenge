@@ -1,14 +1,11 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
 import br.com.jafethenrique.JavaChallenge.utils.phoneObject.Phones;
-import jdk.jfr.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 @Entity
 @Table(name="User")

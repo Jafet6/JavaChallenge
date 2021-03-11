@@ -1,47 +1,47 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
+import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
+import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
+import br.com.jafethenrique.JavaChallenge.utils.exceptions.EmptyEmailException;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
-import org.json.simple.JSONObject;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
 public class UserController {
     private final UserService userService;
 
+    private final UserMapper userMapper;
+
     @Autowired
-    public UserController(UserService userService) {
-
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
-
-//    @GetMapping
-//    public List<User> getStudents() {
-//
-//        return studentService.getStudents();
-//    }
 
 
     @PostMapping(path = "/login")
-    public ResponseEntity loginUser(@RequestBody UserRequestModel user) throws NoSuchAlgorithmException, InvalidPasswordException, InvalidKeySpecException {
-            String serviceResponse = userService.loginUser(user);
-            JSONObject responseObject = new JSONObject();
-            responseObject.put("response", serviceResponse);
-            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+    public ResponseEntity loginUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, ParseException, InvalidPasswordException, InvalidKeySpecException, JsonMappingException, JsonGenerationException, IOException {
+        UserModel user = userMapper.convertUserDTOToEntity(userDto);
+        UserDTO serviceResponse = userService.loginUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(serviceResponse);
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity registerNewUser(@RequestBody UserModel user) throws NoSuchAlgorithmException, InvalidKeySpecException {
-            String serviceResponse = userService.registerNewUser(user);
-            JSONObject responseObject = new JSONObject();
-            responseObject.put("response", serviceResponse);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseObject);
+    public ResponseEntity registerNewUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, EmptyEmailException, ParseException, InvalidKeySpecException, IOException {
+            UserModel user = userMapper.convertUserDTOToEntity(userDto);
+            UserDTO serviceResponse = userService.registerNewUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(serviceResponse);
     }
 
 }

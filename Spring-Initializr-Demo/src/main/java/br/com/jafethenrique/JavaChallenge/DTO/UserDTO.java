@@ -1,32 +1,37 @@
-package br.com.jafethenrique.JavaChallenge.user;
+package br.com.jafethenrique.JavaChallenge.DTO;
+
+import br.com.jafethenrique.JavaChallenge.utils.phoneObject.Phones;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
+import java.util.List;
 
-public class UserResponseModel {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserDTO {
     private Long id;
     private String name;
     private String email;
     private String password;
     private Date created;
-//    private String modified;
-    private Date last_login;
+    private Date lastLogin;
+    private List<Phones> phones;
     private String token;
 
-    public UserResponseModel(Long id, String name, String email, String password, Date created, Date modified, Date last_login, String token) {
+    public UserDTO(Long id, String name, String email, String password, Date created, Date lastLogin, List<Phones> phones, String token) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.created = created;
-//        this.modified = modified;
-        this.last_login = last_login;
+        this.lastLogin = lastLogin;
+        this.phones = phones;
         this.token = token;
     }
 
-    public UserResponseModel() {
+    public UserDTO() {
 
     }
-
 
     public Long getId() {
         return id;
@@ -68,20 +73,20 @@ public class UserResponseModel {
         this.created = created;
     }
 
-//    public String getModified() {
-//        return modified;
-//    }
-//
-//    public void setModified(String modified) {
-//        this.modified = modified;
-//    }
-
-    public Date getLast_login() {
-        return last_login;
+    public Date getLastLogin() {
+        return lastLogin;
     }
 
-    public void setLast_login(Date last_login) {
-        this.last_login = last_login;
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public List<Phones> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phones> phones) {
+        this.phones = phones;
     }
 
     public String getToken() {
@@ -90,6 +95,16 @@ public class UserResponseModel {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
 }
