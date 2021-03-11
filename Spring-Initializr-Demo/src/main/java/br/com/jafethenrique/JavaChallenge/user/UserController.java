@@ -29,7 +29,7 @@ public class UserController {
 
 
     @PostMapping(path = "/login")
-    public ResponseEntity loginUser(@RequestBody User user) throws NoSuchAlgorithmException, InvalidPasswordException, InvalidKeySpecException {
+    public ResponseEntity loginUser(@RequestBody UserRequestModel user) throws NoSuchAlgorithmException, InvalidPasswordException, InvalidKeySpecException {
             String serviceResponse = userService.loginUser(user);
             JSONObject responseObject = new JSONObject();
             responseObject.put("response", serviceResponse);
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity registerNewUser(@RequestBody User user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public ResponseEntity registerNewUser(@RequestBody UserModel user) throws NoSuchAlgorithmException, InvalidKeySpecException {
             String serviceResponse = userService.registerNewUser(user);
             JSONObject responseObject = new JSONObject();
             responseObject.put("response", serviceResponse);
