@@ -23,15 +23,13 @@ public class UserService {
     private final JWTToken jwtToken;
     private final UserRepository userRepository;
     private final HashingMethod hashingMethod;
-    private final ObjectMapper objectMapper;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserService(JWTToken jwtToken, UserRepository userRepository, HashingMethod hashingMethod, ObjectMapper objectMapper, UserMapper userMapper) {
+    public UserService(JWTToken jwtToken, UserRepository userRepository, HashingMethod hashingMethod, UserMapper userMapper) {
         this.jwtToken = jwtToken;
         this.userRepository = userRepository;
         this.hashingMethod = hashingMethod;
-        this.objectMapper = objectMapper;
         this.userMapper = userMapper;
     }
 
@@ -77,6 +75,7 @@ public class UserService {
         userRepository.save(user);
 
         UserDTO response = userMapper.convertUserModelToDto(user);
+
         response.setToken(token);
 
         return response;

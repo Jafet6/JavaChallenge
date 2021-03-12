@@ -1,7 +1,6 @@
 package br.com.jafethenrique.JavaChallenge.DTO;
 
-import br.com.jafethenrique.JavaChallenge.utils.phoneObject.Phones;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.com.jafethenrique.JavaChallenge.phone.Phones;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -28,6 +27,8 @@ public class UserDTO {
         this.phones = phones;
         this.token = token;
     }
+
+
 
     public UserDTO() {
 
@@ -99,7 +100,7 @@ public class UserDTO {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +

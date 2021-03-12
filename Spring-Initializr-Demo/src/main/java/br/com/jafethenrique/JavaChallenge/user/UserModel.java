@@ -1,9 +1,10 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
-import br.com.jafethenrique.JavaChallenge.utils.phoneObject.Phones;
+import br.com.jafethenrique.JavaChallenge.phone.Phones;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class UserModel {
     @Column(name="last_login", nullable = false)
     private Date lastLogin;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userModel", orphanRemoval = true)
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "userModel")
     private List<Phones> phones;
 
     public UserModel(String name, String email, String password, List<Phones> phones) {

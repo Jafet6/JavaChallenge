@@ -1,28 +1,46 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
-import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
+import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
+import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
+import br.com.jafethenrique.JavaChallenge.phone.Phones;
+import br.com.jafethenrique.JavaChallenge.utils.exceptions.EmptyEmailException;
 import br.com.jafethenrique.JavaChallenge.utils.hashingMethod.HashingMethod;
 import br.com.jafethenrique.JavaChallenge.utils.jwtToken.JWTToken;
-import br.com.jafethenrique.JavaChallenge.utils.phoneObject.Phones;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Array;
+import javax.persistence.EntityExistsException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
+    private String token;
+    private UserModel user;
+    private UserDTO mockedUserDTO;
+    private String hashedPassword;
+    private List<Phones> mockedPhones;
+
+    @Mock
+    private UserMapper userMapper;
+
     @Mock
     private UserRepository userRepository;
 
@@ -35,26 +53,78 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userServiceMock;
 
-//    @Test
-//    @DisplayName("Should register a new User")
-//    void registerNewUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException{
-////        UserService userServiceMock = new UserService(jwtToken, userRepository);
-//        Phones phonesMocked = new Phones("123123123", "31");
-//
-//        ArrayList listOfPhones = new ArrayList();
-//        listOfPhones.add(phonesMocked);
-//
-//        UserModel mockedUser = new UserModel("jafet", "jafet@jafet.com", "123123123", listOfPhones);
-//
-//        Mockito.when(userRepository.findByEmail("jafet@jafet.copm"))
-//                .thenReturn(Optional.of(mockedUser));
-//
-//        String token = "asdfgasdfasf";
-//        Mockito.when(jwtToken.createJWT(mockedUser.getEmail(), "localhost:8080", mockedUser.toString(), 100000000))
-//                .thenReturn(token);
-//
-//        assertEquals(token, userServiceMock.registerNewUser(mockedUser));
-//    }
+
+    @BeforeEach
+    public void beforeEach() {
+        Phones phonesMocked = new Phones("123123123", "31");
+
+        ArrayList listOfPhones = new ArrayList();
+        listOfPhones.add(phonesMocked);
+
+        mockedPhones = listOfPhones;
+
+        UserModel mockedUser = new UserModel("jafet", "jafet@jafet.com", "123123123", listOfPhones);
+
+        user = mockedUser;
+
+        token = "token";
+
+        hashedPassword = "password";
+
+        UserDTO userDTO = new UserDTO(1L, "jafet", "jafet@jafet.com", "123123123", new Date(), new Date(), listOfPhones, token);
+
+        mockedUserDTO = userDTO;
+    }
+
+    @Test
+    @DisplayName("Should register a new User")
+    void successfulRegisterNewUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+
+        Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
+                .thenReturn(Optional.<UserModel>empty());
+
+        Mockito.when(jwtToken.createJWT(user.getEmail(), "localhost:8080", user.toString(), 100000000))
+                .thenReturn(token);
+
+        Mockito.when(hashingMethod.generateStrongPasswordHash(user.getPassword())).thenReturn(hashedPassword);
+
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+
+        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDTO);
+
+        assertEquals(mockedUserDTO, userServiceMock.registerNewUser(user));
+    }
+
+    @Test
+    @DisplayName("Should display Usuaria ja cadastrado")
+    void userAlredyExists() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+
+        Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
+                .thenReturn(Optional.of(user));
+
+        try {
+            userServiceMock.registerNewUser(user);
+            fail();
+        } catch (EntityExistsException exception) {
+            assertEquals("Usuario ja cadastrado", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    @DisplayName("Should display Usuaria ja cadastrado")
+    void invalidEmail() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+
+        UserModel userWithInvalidEmail = new UserModel("jafet", "", "123123123", mockedPhones);
+
+        try {
+            userServiceMock.registerNewUser(userWithInvalidEmail);
+            fail();
+        } catch (EmptyEmailException exception) {
+            assertEquals("Email invalido", exception.getMessage());
+        }
+
+    }
 
 //	@Test
 //    @DisplayName("Should login a User")

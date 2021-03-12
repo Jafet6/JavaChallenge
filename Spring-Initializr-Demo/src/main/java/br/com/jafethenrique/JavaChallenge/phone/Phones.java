@@ -1,6 +1,8 @@
-package br.com.jafethenrique.JavaChallenge.utils.phoneObject;
+package br.com.jafethenrique.JavaChallenge.phone;
 
 import br.com.jafethenrique.JavaChallenge.user.UserModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 
@@ -13,10 +15,18 @@ public class Phones {
     private String number;
     private String ddd;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private UserModel userModel;
 
+    @Autowired
+    public Phones(String number, String ddd, UserModel userModel) {
+        this.number = number;
+        this.ddd = ddd;
+        this.userModel = userModel;
+    }
+
+    @Autowired
     public Phones(String number, String ddd) {
         this.number = number;
         this.ddd = ddd;
