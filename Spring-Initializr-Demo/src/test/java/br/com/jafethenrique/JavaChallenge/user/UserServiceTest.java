@@ -4,6 +4,7 @@ import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
 import br.com.jafethenrique.JavaChallenge.phone.Phones;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.EmptyEmailException;
+import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
 import br.com.jafethenrique.JavaChallenge.utils.hashingMethod.HashingMethod;
 import br.com.jafethenrique.JavaChallenge.utils.jwtToken.JWTToken;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -126,26 +128,53 @@ public class UserServiceTest {
 
     }
 
-//	@Test
-//    @DisplayName("Should login a User")
-//	public void loginUserTest() throws NoSuchAlgorithmException, InvalidPasswordException, InvalidKeySpecException {
-////        UserService userServiceMock = new UserService(jwtToken, userRepository);
-//        Phones phonesMocked = new Phones("123123123", "31");
-//
-//        ArrayList listOfPhones = new ArrayList();
-//        listOfPhones.add(phonesMocked);
-//
-//		UserModel mockedUser = new UserModel("jafet", "jafet@jafet.com", "123123123", listOfPhones);
-//        UserRequestModel userRequestModel = new UserRequestModel("jafet@jafet.com", "123123123");
-//
-//		Mockito.when(userRepository.findByEmail("jafet@jafet.com")).thenReturn(Optional.of(mockedUser));
-//
-//	    Mockito.when(hashingMethod.validatePassword(mockedUser.getPassword(), mockedUser.getPassword())).thenReturn(true);
-//
-//        String token = "asdfgasdfasf";
-//        Mockito.when(jwtToken.createJWT(mockedUser.getEmail(), "localhost:8080", mockedUser.toString(), 100000000)).thenReturn(token);
-//
-//		assertEquals(token, userServiceMock.loginUser(userRequestModel));
-//
-//	}
+    @Test
+    @DisplayName("Should login User")
+    void successfulLoginUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+
+        Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
+                .thenReturn(Optional.of(user));
+
+
+        Mockito.when(hashingMethod.validatePassword(user.getPassword(), user.getPassword())).thenReturn(true);
+
+        Mockito.when(jwtToken.createJWT(user.getEmail(), "localhost:8080", user.toString(), 100000000))
+                .thenReturn(token);
+
+        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDTO);
+
+        assertEquals(mockedUserDTO, userServiceMock.loginUser(user));
+    }
+
+    @Test
+    @DisplayName("User not found in Database")
+    void UserNotFoundTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+
+        Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
+                .thenReturn(Optional.<UserModel>empty());
+
+        try {
+            userServiceMock.loginUser(user);
+            fail();
+        } catch (EntityNotFoundException exception) {
+            assertEquals("Usuario nao encontrado", exception.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName("Invalid password for a User")
+    void InvalidPasswordForAUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+
+        Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(hashingMethod.validatePassword(user.getPassword(), user.getPassword())).thenReturn(false);
+
+        try {
+            userServiceMock.loginUser(user);
+            fail();
+        } catch (InvalidPasswordException exception) {
+            assertEquals("Senha incorreta", exception.getMessage());
+        }
+    }
 }
