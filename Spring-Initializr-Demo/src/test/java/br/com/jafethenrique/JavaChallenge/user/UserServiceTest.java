@@ -1,8 +1,11 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
-import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
+import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.domain.User;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
-import br.com.jafethenrique.JavaChallenge.phone.Phones;
+import br.com.jafethenrique.JavaChallenge.domain.Phones;
+import br.com.jafethenrique.JavaChallenge.repository.UserRepository;
+import br.com.jafethenrique.JavaChallenge.service.UserService;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.EmptyEmailException;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
 import br.com.jafethenrique.JavaChallenge.utils.hashingMethod.HashingMethod;
@@ -23,8 +26,10 @@ import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
     private String token;
-    private UserModel user;
+    private User user;
     private UserDTO mockedUserDTO;
     private String hashedPassword;
     private List<Phones> mockedPhones;
@@ -65,7 +70,7 @@ public class UserServiceTest {
 
         mockedPhones = listOfPhones;
 
-        UserModel mockedUser = new UserModel("jafet", "jafet@jafet.com", "123123123", listOfPhones);
+        User mockedUser = new User("jafet", "jafet@jafet.com", "123123123", listOfPhones);
 
         user = mockedUser;
 
@@ -73,17 +78,17 @@ public class UserServiceTest {
 
         hashedPassword = "password";
 
-        UserDTO userDTO = new UserDTO(1L, "jafet", "jafet@jafet.com", "123123123", new Date(), new Date(), listOfPhones, token);
+        UserDTO userDTO = new UserDTO(1L, "jafet", "jafet@jafet.com", "123123123", OffsetDateTime.now(ZoneOffset.UTC), OffsetDateTime.now(ZoneOffset.UTC), listOfPhones, token);
 
         mockedUserDTO = userDTO;
     }
 
     @Test
     @DisplayName("Should register a new User")
-    void successfulRegisterNewUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+    void successfulRegisterNewUserTest() throws NoSuchAlgorithmException, ParseException, InvalidKeySpecException, EmptyEmailException, IOException {
 
         Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
-                .thenReturn(Optional.<UserModel>empty());
+                .thenReturn(Optional.<User>empty());
 
         Mockito.when(jwtToken.createJWT(user.getEmail(), "localhost:8080", user.toString(), 100000000))
                 .thenReturn(token);
@@ -99,7 +104,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Should display Usuaria ja cadastrado")
-    void userAlredyExists() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+    void userAlredyExists() throws NoSuchAlgorithmException, ParseException, InvalidKeySpecException, EmptyEmailException, IOException {
 
         Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
                 .thenReturn(Optional.of(user));
@@ -115,9 +120,9 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Should display Usuaria ja cadastrado")
-    void invalidEmail() throws NoSuchAlgorithmException, InvalidKeySpecException, EmptyEmailException, IOException {
+    void invalidEmail() throws NoSuchAlgorithmException, ParseException, InvalidKeySpecException, EmptyEmailException, IOException {
 
-        UserModel userWithInvalidEmail = new UserModel("jafet", "", "123123123", mockedPhones);
+        User userWithInvalidEmail = new User("jafet", "", "123123123", mockedPhones);
 
         try {
             userServiceMock.registerNewUser(userWithInvalidEmail);
@@ -130,7 +135,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Should login User")
-    void successfulLoginUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+    void successfulLoginUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException, ParseException {
 
         Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
                 .thenReturn(Optional.of(user));
@@ -148,10 +153,10 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("User not found in Database")
-    void UserNotFoundTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+    void UserNotFoundTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException, ParseException {
 
         Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
-                .thenReturn(Optional.<UserModel>empty());
+                .thenReturn(Optional.<User>empty());
 
         try {
             userServiceMock.loginUser(user);
@@ -163,7 +168,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Invalid password for a User")
-    void InvalidPasswordForAUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException {
+    void InvalidPasswordForAUserTest() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException, ParseException {
 
         Mockito.when(userRepository.findByEmail("jafet@jafet.com"))
                 .thenReturn(Optional.of(user));

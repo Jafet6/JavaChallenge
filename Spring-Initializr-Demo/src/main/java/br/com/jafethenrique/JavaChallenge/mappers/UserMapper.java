@@ -1,7 +1,7 @@
 package br.com.jafethenrique.JavaChallenge.mappers;
 
-import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
-import br.com.jafethenrique.JavaChallenge.user.UserModel;
+import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.domain.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,14 +15,14 @@ public class UserMapper {
         this.modelMapper = modelMapper;
     }
 
-    public UserDTO convertUserModelToDto(UserModel user) {
+    public UserDTO convertUserModelToDto(User user) {
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         return userDTO;
     }
 
-    public UserModel convertUserDTOToEntity(UserDTO userDto) throws ParseException {
+    public User convertUserDTOToEntity(UserDTO userDto) throws ParseException {
         userDto.setId(null);
-        UserModel userModel = modelMapper.map(userDto, UserModel.class);
+        User userModel = modelMapper.map(userDto, User.class);
         return userModel;
     }
 }

@@ -1,7 +1,9 @@
-package br.com.jafethenrique.JavaChallenge.user;
+package br.com.jafethenrique.JavaChallenge.controller;
 
-import br.com.jafethenrique.JavaChallenge.DTO.UserDTO;
+import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
+import br.com.jafethenrique.JavaChallenge.domain.User;
+import br.com.jafethenrique.JavaChallenge.service.UserService;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.EmptyEmailException;
 import br.com.jafethenrique.JavaChallenge.utils.exceptions.InvalidPasswordException;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -32,14 +34,14 @@ public class UserController {
 
     @PostMapping(path = "/login")
     public ResponseEntity loginUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, ParseException, InvalidPasswordException, InvalidKeySpecException, JsonMappingException, JsonGenerationException, IOException {
-        UserModel user = userMapper.convertUserDTOToEntity(userDto);
+        User user = userMapper.convertUserDTOToEntity(userDto);
         UserDTO serviceResponse = userService.loginUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(serviceResponse);
     }
 
     @PostMapping(path = "/register")
     public ResponseEntity registerNewUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, EmptyEmailException, ParseException, InvalidKeySpecException, IOException {
-            UserModel user = userMapper.convertUserDTOToEntity(userDto);
+            User user = userMapper.convertUserDTOToEntity(userDto);
             UserDTO serviceResponse = userService.registerNewUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(serviceResponse);
     }
