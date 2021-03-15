@@ -1,4 +1,4 @@
-package br.com.jafethenrique.JavaChallenge.utils.exceptions;
+package br.com.jafethenrique.JavaChallenge.exceptions;
 
 public class InvalidPasswordException extends Exception {
     public InvalidPasswordException(String message) {

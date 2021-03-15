@@ -3,12 +3,14 @@ package br.com.jafethenrique.JavaChallenge.responses;
 import br.com.jafethenrique.JavaChallenge.domain.Phones;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@Component
 public class UserDTO {
     private Long id;
     private String name;
