@@ -1,6 +1,8 @@
 package br.com.jafethenrique.JavaChallenge.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -10,7 +12,6 @@ import java.util.List;
 @Table(name="User")
 @Data
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

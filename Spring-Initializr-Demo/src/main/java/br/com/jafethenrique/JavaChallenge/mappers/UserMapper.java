@@ -1,6 +1,8 @@
 package br.com.jafethenrique.JavaChallenge.mappers;
 
-import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.requests.UserLoginRequest;
+import br.com.jafethenrique.JavaChallenge.requests.UserRegisterRequest;
+import br.com.jafethenrique.JavaChallenge.responses.UserDataResponse;
 import br.com.jafethenrique.JavaChallenge.domain.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,18 @@ public class UserMapper {
         this.modelMapper = modelMapper;
     }
 
-    public UserDTO convertUserModelToDto(User user) {
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        return userDTO;
+    public UserDataResponse convertUserModelToUserResponse(User user) {
+        UserDataResponse userDataResponse = modelMapper.map(user, UserDataResponse.class);
+        return userDataResponse;
     }
 
-    public User convertUserDTOToEntity(UserDTO userDto) throws ParseException {
-        userDto.setId(null);
-        User userModel = modelMapper.map(userDto, User.class);
+    public User convertUserRegisterRequestToEntity(UserRegisterRequest userRequest) throws ParseException {
+        User userModel = modelMapper.map(userRequest, User.class);
+        return userModel;
+    }
+
+    public User convertUserLoginRequestToEntity(UserLoginRequest userRequest) throws ParseException {
+        User userModel = modelMapper.map(userRequest, User.class);
         return userModel;
     }
 }

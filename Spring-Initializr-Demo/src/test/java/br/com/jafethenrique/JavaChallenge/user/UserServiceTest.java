@@ -1,6 +1,6 @@
 package br.com.jafethenrique.JavaChallenge.user;
 
-import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.responses.UserDataResponse;
 import br.com.jafethenrique.JavaChallenge.domain.User;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
 import br.com.jafethenrique.JavaChallenge.domain.Phones;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class UserServiceTest {
     private String token;
     private User user;
-    private UserDTO mockedUserDTO;
+    private UserDataResponse mockedUserDataResponse;
     private String hashedPassword;
     private List<Phones> mockedPhones;
 
@@ -78,9 +78,9 @@ public class UserServiceTest {
 
         hashedPassword = "password";
 
-        UserDTO userDTO = new UserDTO(1L, "jafet", "jafet@jafet.com", "123123123", OffsetDateTime.now(ZoneOffset.UTC), OffsetDateTime.now(ZoneOffset.UTC), listOfPhones, token);
+        UserDataResponse userDataResponse = new UserDataResponse(1L, "jafet", "jafet@jafet.com", "123123123", OffsetDateTime.now(ZoneOffset.UTC), OffsetDateTime.now(ZoneOffset.UTC), listOfPhones, token);
 
-        mockedUserDTO = userDTO;
+        mockedUserDataResponse = userDataResponse;
     }
 
     @Test
@@ -97,9 +97,9 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDTO);
+        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDataResponse);
 
-        assertEquals(mockedUserDTO, userServiceMock.registerNewUser(user));
+        assertEquals(mockedUserDataResponse, userServiceMock.registerNewUser(user));
     }
 
     @Test
@@ -146,9 +146,9 @@ public class UserServiceTest {
         Mockito.when(jwtToken.createJWT(user.getEmail(), "localhost:8080", user.toString(), 100000000))
                 .thenReturn(token);
 
-        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDTO);
+        Mockito.when(userMapper.convertUserModelToDto(user)).thenReturn(mockedUserDataResponse);
 
-        assertEquals(mockedUserDTO, userServiceMock.loginUser(user));
+        assertEquals(mockedUserDataResponse, userServiceMock.loginUser(user));
     }
 
     @Test

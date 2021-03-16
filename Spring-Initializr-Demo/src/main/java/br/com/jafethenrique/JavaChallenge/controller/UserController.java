@@ -1,6 +1,8 @@
 package br.com.jafethenrique.JavaChallenge.controller;
 
-import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.requests.UserLoginRequest;
+import br.com.jafethenrique.JavaChallenge.requests.UserRegisterRequest;
+import br.com.jafethenrique.JavaChallenge.responses.UserDataResponse;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
 import br.com.jafethenrique.JavaChallenge.domain.User;
 import br.com.jafethenrique.JavaChallenge.service.UserService;
@@ -31,19 +33,18 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-
-    @PostMapping(path = "/login")
-    public ResponseEntity loginUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, ParseException, InvalidPasswordException, InvalidKeySpecException, JsonMappingException, JsonGenerationException, IOException {
-        User user = userMapper.convertUserDTOToEntity(userDto);
-        UserDTO serviceResponse = userService.loginUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(serviceResponse);
+    @PostMapping(path = "/register")
+    public ResponseEntity registerNewUser(@RequestBody UserRegisterRequest user) throws NoSuchAlgorithmException, EmptyEmailException, ParseException, InvalidKeySpecException, IOException {
+        User userDomain = userMapper.convertUserRegisterRequestToEntity(user);
+        UserDataResponse serviceResponse = userService.registerNewUser(userDomain);
+        return ResponseEntity.status(HttpStatus.CREATED).body(serviceResponse);
     }
 
-    @PostMapping(path = "/register")
-    public ResponseEntity registerNewUser(@RequestBody UserDTO userDto) throws NoSuchAlgorithmException, EmptyEmailException, ParseException, InvalidKeySpecException, IOException {
-            User user = userMapper.convertUserDTOToEntity(userDto);
-            UserDTO serviceResponse = userService.registerNewUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(serviceResponse);
+    @PostMapping(path = "/login")
+    public ResponseEntity loginUser(@RequestBody UserLoginRequest userDataResponse) throws NoSuchAlgorithmException, ParseException, InvalidPasswordException, InvalidKeySpecException, JsonMappingException, JsonGenerationException, IOException {
+        User userDomain = userMapper.convertUserLoginRequestToEntity(userDataResponse);
+        UserDataResponse serviceResponse = userService.loginUser(userDomain);
+        return ResponseEntity.status(HttpStatus.OK).body(serviceResponse);
     }
 
 }

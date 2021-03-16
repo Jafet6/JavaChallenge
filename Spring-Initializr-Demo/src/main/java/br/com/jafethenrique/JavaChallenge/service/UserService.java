@@ -1,6 +1,6 @@
 package br.com.jafethenrique.JavaChallenge.service;
 
-import br.com.jafethenrique.JavaChallenge.responses.UserDTO;
+import br.com.jafethenrique.JavaChallenge.responses.UserDataResponse;
 import br.com.jafethenrique.JavaChallenge.domain.User;
 import br.com.jafethenrique.JavaChallenge.mappers.UserMapper;
 import br.com.jafethenrique.JavaChallenge.repository.UserRepository;
@@ -43,32 +43,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado"));
     }
 
-    public UserDTO loginUser(User user)
-            throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException, ParseException {
-        Optional databaseUser = userRepository.findByEmail(user.getEmail());
-
-        if (databaseUser.isEmpty()) throw new EntityNotFoundException("Usuario nao encontrado");
-//        User databaseUser = findUserByEmailOrThrowAnException(user.getEmail());
-        User userFromDatabase = (User) databaseUser.get();
-
-        OffsetDateTime UTCCurrentDate = utcCurrentDate.getCurrentUtcTime();
-        userFromDatabase.setLastLogin(UTCCurrentDate);
-
-        User userPersisted = userRepository.save(userFromDatabase);
-
-        if (!hashingMethod.validatePassword(user.getPassword(), userFromDatabase.getPassword()))
-            throw new InvalidPasswordException("Senha incorreta");
-
-        String token = jwtToken.createJWT(
-                user.getEmail(), "localhost:8080", user.toString(), 100000000);
-
-        UserDTO response = userMapper.convertUserModelToDto(userPersisted);
-        response.setToken(token);
-
-        return response;
-    }
-
-    public UserDTO registerNewUser(User user)
+    public UserDataResponse registerNewUser(User user)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, EmptyEmailException, ParseException {
 
         String userEmail = user.getEmail();
@@ -94,10 +69,36 @@ public class UserService {
 
         User userPersisted = userRepository.save(user);
 
-        UserDTO response = userMapper.convertUserModelToDto(userPersisted);
+        UserDataResponse response = userMapper.convertUserModelToUserResponse(userPersisted);
 
         response.setToken(token);
 
         return response;
     }
+
+    public UserDataResponse loginUser(User user)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidPasswordException, IOException, ParseException {
+        Optional databaseUser = userRepository.findByEmail(user.getEmail());
+
+        if (databaseUser.isEmpty()) throw new EntityNotFoundException("Usuario nao encontrado");
+//        User databaseUser = findUserByEmailOrThrowAnException(user.getEmail());
+        User userFromDatabase = (User) databaseUser.get();
+
+        OffsetDateTime UTCCurrentDate = utcCurrentDate.getCurrentUtcTime();
+        userFromDatabase.setLastLogin(UTCCurrentDate);
+
+        User userPersisted = userRepository.save(userFromDatabase);
+
+        if (!hashingMethod.validatePassword(user.getPassword(), userFromDatabase.getPassword()))
+            throw new InvalidPasswordException("Senha incorreta");
+
+        String token = jwtToken.createJWT(
+                user.getEmail(), "localhost:8080", user.toString(), 100000000);
+
+        UserDataResponse response = userMapper.convertUserModelToUserResponse(userPersisted);
+        response.setToken(token);
+
+        return response;
+    }
+
 }

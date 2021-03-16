@@ -11,7 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @Component
-public class UserDTO {
+public class UserDataResponse {
     private Long id;
     private String name;
     private String email;
